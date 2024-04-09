@@ -1,25 +1,45 @@
 import NumberOfEvents from "../components/NumberOfEvents";
-import { render } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-describe('<NumberOfEvents /> component', ()=>{
+import { render, within, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import App from '../App';
+
+describe('<NumberOfEvents/> component', () => {
+
     let NumberOfEventsComponent;
-    beforeEach(()=>{
-        NumberOfEventsComponent= render(
-        <NumberOfEvents setCurrentNOE={() => {}} setErrorAlert={() => {}} />
-        )
+    beforeEach(() =>
+        NumberOfEventsComponent = render(<NumberOfEvents setErrorAlert={() => { }} />)
+    )
+
+    test('render element with role textbox', () => {
+        expect(NumberOfEventsComponent.queryByRole('spinbutton')).toBeInTheDocument();
     })
-    test('has an element with role of a textbox', ()=>{
-        const numberTextbox = NumberOfEventsComponent.queryByRole('textbox');
-        expect(numberTextbox).toBeInTheDocument();
-        expect(numberTextbox).toHaveClass('textboxNumber');
-    });
-    test('by default, number of event is listed 32', ()=>{
-        expect(NumberOfEventsComponent.queryByRole('textbox')).toHaveValue('32');
-    });
-    
-    test('updates number of events when user types', async()=>{
-        const numberTextbox = NumberOfEventsComponent.queryByRole('textbox');
-        await userEvent.type(numberTextbox, "{backspace}{backspace}10");
-        expect(numberTextbox.value).toBe("10");
-    });
+    test('default value of the input field is 32', () => {
+        const defaultValue = NumberOfEventsComponent.getByDisplayValue('32');
+        expect(defaultValue).toBeInTheDocument();
+    })
+    test('value of input changes as user types in the input field', async () => {
+        const user = userEvent.setup();
+        NumberOfEventsComponent.rerender(<NumberOfEvents setCurrentNOE={() => { }} setErrorAlert={() => { }} />);
+        const inputField = NumberOfEventsComponent.queryByRole('spinbutton')
+        await user.type(inputField, '{backspace}{backspace}4');
+        expect(inputField).toHaveValue(4);
+    })
+})
+
+describe('<NunberOfEvents /> integration', () => {
+    test('changes amount of shown event depending on value in input field', async () => {
+        const user = userEvent.setup();
+        const AppComponent = render(<App />);
+        const AppDOM = AppComponent.container.firstChild;
+        const NumberOfEventstDOM = AppDOM.querySelector('#number-events');
+
+        const numberTextBox = within(NumberOfEventstDOM).queryByRole('spinbutton');
+        await user.type(numberTextBox, "{backspace}{backspace}10");
+
+        const EventListDOM = AppDOM.querySelector('#event-list');
+        await waitFor(() => {
+            const EventListItems = within(EventListDOM).queryAllByRole('listitem');
+            expect(EventListItems.length).toBe(10);
+        });
+    })
 })
