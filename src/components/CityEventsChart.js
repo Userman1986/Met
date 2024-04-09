@@ -13,8 +13,9 @@ const CityEventsChart = ({ allLocations, events }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    setData(getData());
-  }, [`${events}`]);
+    const fetchData = getData(); // Extracting the function call into a variable
+    setData(fetchData);
+  }, [events]); // Adding 'events' as the only dependency
 
   const getData = () => {
     const data = allLocations.map((location) => {
