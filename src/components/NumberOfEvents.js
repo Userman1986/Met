@@ -1,23 +1,31 @@
-import { useEffect } from "react";
+import React from "react";
 
-const NumberOfEvents = ({ setCurrentNOE, setErrorAlert, currentNOE }) => {
-    useEffect(() => {
-        let errorText = "";
-        if (currentNOE !== "") {
-            if (currentNOE <= 0) {
-                errorText = "Only numbers above 0 are allowed";
-            } else if (currentNOE >= 500) {
-                errorText = "There aren't that many events to display, please choose a lower number";
-            }
+const NumberOfEvents =({setCurrentNOE, setErrorAlert})=>{
+    const handleInputChanged =(event)=>{
+        const value = event.target.value;
+        console.log("Number is:", value);
+    setCurrentNOE(value);
+        let errorText;
+        if (isNaN(value) || value <= 0) {
+          errorText = "Minimum 1 is required";
+          setErrorAlert(errorText);
+        } else {
+          setCurrentNOE(value);
+          errorText = "";
+          setErrorAlert(errorText);
         }
-        setErrorAlert(errorText)
-    }, [currentNOE, setErrorAlert])
-    //invalid number of events (e.g., a negative number, a large number, or characters). Otherwise, call the setter method with an empty string to hide the alert.
+    }
     return (
-        <div id='number-events'>
-            <label className='label_events__number' >Number of events: </label>
-            <input className='input_events__number' type="number" defaultValue={32} onChange={(e) => { setCurrentNOE(e.target.value); setErrorAlert(""); }} />
+        <div id="number-of-events">
+          <input
+            data-testid="numberOfEventsInput"
+            type="text"
+            className="textboxNumber"
+            defaultValue="32"
+            onChange={handleInputChanged}
+          />
         </div>
-    )
-}
+      );
+    };
+
 export default NumberOfEvents;
