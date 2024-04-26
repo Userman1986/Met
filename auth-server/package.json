@@ -2,7 +2,7 @@
   "name": "auth-server",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://userman1986.github.io/Met/",
+  "homepage": "https://userman1986.github.io/meet/",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
